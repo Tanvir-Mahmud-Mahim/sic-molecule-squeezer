@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+venv/
+*.msh
+src/*.npz
+src/*.json
+src/*.log
+!src/requirements*
+figures/*.pdf

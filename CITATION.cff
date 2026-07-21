@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the article and the archive."
+title: "sic-molecule-squeezer: end-to-end open-source design of a 4H-SiC photonic-molecule squeezed-light source"
+type: software
+authors:
+  - family-names: Mahim
+    given-names: Tanvir M.
+    affiliation: "Department of Electrical and Electronic Engineering, BRAC University, Dhaka 1212, Bangladesh"
+    email: tanvir.mahim@bracu.ac.bd
+  - family-names: Rahman
+    given-names: M. Mosaddequr
+    affiliation: "Department of Electrical and Electronic Engineering, BRAC University, Dhaka 1212, Bangladesh"
+  - family-names: Mohsin
+    given-names: Abu S. M.
+    affiliation: "Department of Electrical and Electronic Engineering, BRAC University, Dhaka 1212, Bangladesh"
+version: 1.0.0
+date-released: 2026-07-21
+license: Apache-2.0
+repository-code: "https://github.com/Tanvir-Mahmud-Mahim/sic-molecule-squeezer"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.21471674
+    description: "Zenodo archive of the simulation data and testbench"
+keywords:
+  - silicon carbide
+  - microcomb
+  - soliton crystal
+  - squeezed light
+  - photonic molecule
+  - Lugiato-Lefever
+  - quantum optics
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Mahim
+      given-names: Tanvir M.
+    - family-names: Rahman
+      given-names: M. Mosaddequr
+    - family-names: Mohsin
+      given-names: Abu S. M.
+  title: "Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule"
+  year: 2026

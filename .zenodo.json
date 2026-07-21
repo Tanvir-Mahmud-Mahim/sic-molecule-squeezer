@@ -1,0 +1,28 @@
+{
+  "title": "sic-molecule-squeezer: end-to-end open-source design of a 4H-SiC photonic-molecule squeezed-light source",
+  "description": "Complete simulation pipeline (FEM waveguide dispersion, Lugiato-Lefever soliton crystals, linearized multimode quantum model) for the article 'Photonic-molecule extraction of multimode squeezed light from a dispersion-engineered 4H-silicon-carbide soliton-crystal microcomb'.",
+  "license": "Apache-2.0",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Mahim, Tanvir M.",
+      "affiliation": "BRAC University"
+    },
+    {
+      "name": "Rahman, M. Mosaddequr",
+      "affiliation": "BRAC University"
+    },
+    {
+      "name": "Mohsin, Abu S. M.",
+      "affiliation": "BRAC University"
+    }
+  ],
+  "keywords": ["silicon carbide", "microcomb", "soliton crystal", "squeezed light", "photonic molecule", "quantum optics"],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "10.5281/zenodo.21471674",
+      "resource_type": "dataset"
+    }
+  ]
+}
