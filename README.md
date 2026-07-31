@@ -1,80 +1,133 @@
-# Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule
+# sic-molecule-squeezer
 
-End-to-end open-source simulation study: FEM waveguide dispersion -> Lugiato-Lefever
-soliton-crystal mean field -> linearized multimode quantum model -> detected squeezing
-and entanglement at a photonic-molecule drop port.
+**End-to-end open-source design of a 4H-SiC photonic-molecule source of
+multimode squeezed light from soliton-crystal microcombs.**
 
-Code: https://github.com/Tanvir-Mahmud-Mahim/sic-molecule-squeezer (Apache-2.0)
-Data + testbench: https://doi.org/10.5281/zenodo.21471674 (CC-BY-4.0)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21471674.svg)](https://doi.org/10.5281/zenodo.21471674)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org)
 
-## Contents
+This repository contains the complete simulation pipeline for the article
 
-- `paper/` - Optics Express manuscript (Optica universal template)
-  - `manuscript.tex` - single self-contained top-level file (all numbers and
-    links inlined as macros; manual DOI-hyperlinked bibliography, 33 references)
-  - `manuscript.pdf` (10 pages, abstract 145 words)
-  - `fig0_abstract.pdf` (graphical abstract), `fig1_device.pdf` ... `fig5_d3.pdf`
-  - Table 1: quantitative figure-of-merit comparison with the state of the art
-- `supplement/` - supplemental document (Optica supplemental template)
-  - `supplement.tex` - single self-contained top-level file
-  - `supplement.pdf` (4 pages), `figS1.pdf`
-- `sim/` - complete simulation pipeline (Python 3, open source only)
-  - `materials.py` - Sellmeier models (refractiveindex.info, CC0)
-  - `fem_modes.py`, `sweep_fem.py`, `fem_final.py` - femwell/scikit-fem FEM mode solving
-  - `dispersion.py` - ring resonance grid, D1..D4 extraction
-  - `lle.py`, `exp_lle.py` - modal LLE, co-moving-frame soliton crystals
-  - `quantum.py` - linearized Heisenberg-Langevin multimode model
-  - `exp_quantum.py`, `exp_addendum.py` - production quantum experiments
-  - `validate_quantum.py` - analytic validation tests
-  - `convergence_checks.py` - numerical convergence studies
-  - `make_numbers.py` - regenerates all quoted numbers from data
-  - `fig_*.py`, `figstyle.py` - figure generation
-  - `*.json`, `*.npz`, `*.log` - all raw simulation data and run logs
-- `figures/` - all figures as PDF and PNG
-- `upload/` - published packages and the guide used to publish them
-  - `github-repo/sic-molecule-squeezer/` - code package as uploaded to GitHub
-    (README, Apache-2.0 LICENSE, NOTICE, CITATION.cff, .zenodo.json)
-  - `zenodo-dataset/sic-molecule-squeezer-data-v1.0/` - data + testbench package
-    as published on Zenodo (CC-BY-4.0)
-  - `UPLOAD_GUIDE.md` - how both were published and wired into the paper
-- `opex_submission_main.zip` / `opex_submission_supplement.zip` - flat,
-  single-.tex submission packages for Optics Express (verified to compile standalone)
-- `SiC_squeezing_project_final.zip` - this whole project, archived
-- `UPLOAD_RECORD.md` - record of how the GitHub and Zenodo uploads were performed
+> T. M. Mahim, M. M. Rahman, and A. S. M. Mohsin, "Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule," (2026).
+
+The pipeline runs from public material data to detected quantum noise:
+
+```
+Sellmeier data (CC0)  ->  FEM waveguide modes  ->  ring dispersion D1..D4
+                      ->  Lugiato-Lefever soliton crystal (co-moving frame)
+                      ->  linearized multimode Heisenberg-Langevin model
+                      ->  squeezing spectra, supermodes, entanglement
+```
+
+The raw simulation **data and the validation testbench** are archived
+separately on Zenodo: **doi:10.5281/zenodo.21471674**.
+
+---
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `src/materials.py` | Sellmeier models (4H-SiC Wang 2013; SiO2 Malitson 1965; refractiveindex.info, CC0) |
+| `src/fem_modes.py` | femwell/scikit-fem full-vector FEM mode solver wrapper |
+| `src/sweep_fem.py` | geometry sweep (widths x thicknesses) |
+| `src/fem_final.py` | high-accuracy run for the selected geometry, effective area, mode field, mesh convergence |
+| `src/dispersion.py` | ring resonance grid and D1, D2, D3, D4 extraction |
+| `src/lle.py` | modal Lugiato-Lefever solver, soliton-crystal ansatz, drift measurement |
+| `src/exp_lle.py` | crystal continuation across detuning; D3 scaling family |
+| `src/quantum.py` | linearized multimode quantum model (input-output, covariance, log-negativity) |
+| `src/exp_quantum.py` | production quantum experiments (bare device, molecule sweep, entanglement, D3 study) |
+| `src/exp_addendum.py` | ideal-detection and molecule squeezing across the detuning family |
+| `src/validate_quantum.py` | analytic testbench (vacuum, Bogoliubov, 3 dB bound, uncertainty) |
+| `src/convergence_checks.py` | numerical convergence testbench (LLE grid/step, mode truncation) |
+| `src/make_numbers.py` | regenerates every number quoted in the paper from the data |
+| `src/fig_*.py`, `src/figstyle.py` | publication figure generation |
+| `figures/` | rendered figures (PNG previews) |
+
+## Installation
+
+Requires Python 3.10+ and a C/C++ toolchain for `gmsh`.
+
+```bash
+git clone https://github.com/Tanvir-Mahmud-Mahim/sic-molecule-squeezer.git
+cd sic-molecule-squeezer
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+```
+
+On Debian/Ubuntu, `gmsh` additionally needs system libraries:
+
+```bash
+sudo apt-get install libglu1-mesa libxrender1 libxcursor1 libxft2 libxinerama1
+```
+
+## Quick start
+
+Reproduce the full study (about 1-2 h on a modern laptop):
+
+```bash
+cd src
+python sweep_fem.py         # FEM geometry sweep          (~5 min)
+python fem_final.py         # selected geometry, order-2  (~5 min)
+python exp_lle.py           # soliton-crystal families    (~40 min)
+python exp_quantum.py       # quantum experiments         (~15 min)
+python exp_addendum.py      # detuning-family squeezing   (~10 min)
+python validate_quantum.py  # analytic testbench          (~1 min)
+python convergence_checks.py# convergence testbench       (~15 min)
+python make_numbers.py      # regenerate paper numbers
+for f in fig_abstract fig_device fig_comb fig_quantum fig_molecule fig_d3; do
+    python $f.py            # figures -> ../figures/
+done
+```
+
+To skip the compute and analyze the published outputs directly, download
+the Zenodo archive (doi:10.5281/zenodo.21471674) and unpack its `data/`
+folder into `src/`.
+
+## Testbench
+
+Two scripts verify the physics and the numerics:
+
+- `validate_quantum.py` checks the quantum solver against closed-form
+  results: exact vacuum output (machine precision), Bogoliubov drift
+  eigenvalues of the pumped resonator, the 3 dB critical-coupling bound,
+  and the Heisenberg uncertainty product.
+- `convergence_checks.py` verifies LLE grid/time-step convergence and the
+  fluctuation-mode truncation dependence of the quoted squeezing.
+
+Expected outputs are archived with the Zenodo record under
+`testbench/expected_output/`.
 
 ## Key results
 
-- Selected geometry: 1.85 um x 500 nm oxide-clad 4H-SiC, R = 50.06 um, FSR 350 GHz
-- D2/2pi = 6.89 MHz, D3/2pi = -63.4 kHz (FEM, converged to <1e-7 in neff)
-- Stationary 2-FSR soliton crystal for zeta0 = 5.75-11.0 at 8.3 mW pump
-- D3-induced repetition-rate shift: -1.3 to -2.2 MHz (linear in D3; in-situ diagnostic)
-- Bare critically coupled device: squeezing pinned at the 3 dB coupling limit
-- Photonic molecule at fixed pump: optimum Purcell rate ~10 kappa,
-  8.5 dB detected squeezing over 1.74 GHz; 9.6 dB near annihilation
-- Drop-port entangled odd-mode lattice, log-negativity up to 0.12
-- Squeezing robust to D3 (spread < 0.01 dB) until crystal loss at ~3.5x design D3
+| Quantity | Value |
+|---|---|
+| Selected geometry | 1.85 um x 500 nm 4H-SiC, oxide clad, R = 50.06 um |
+| Dispersion | D2/2pi = 6.89 MHz, D3/2pi = -63.4 kHz (FSR 350 GHz) |
+| Detected squeezing | 8.5 dB at 8.3 mW pump (optimum kappa_P = 10 kappa) |
+| Squeezing bandwidth | 1.74 GHz (3.7x at 20 kappa) |
+| Entanglement | odd-mode lattice, E_N up to 0.12 at the drop port |
+| D3 tolerance | crystal survives to ~3.5x design D3 (~222 kHz) |
 
-## Reproducing
+## Citing
 
+If you use this code, please cite the article and the software/data
+archive (see `CITATION.cff`):
+
+```bibtex
+@article{Mahim2026SiCSqueezer,
+  author  = {Mahim, Tanvir M. and Rahman, M. Mosaddequr and Mohsin, Abu S. M.},
+  title   = {Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule},
+  year    = {2026},
+  note    = {Code: https://github.com/Tanvir-Mahmud-Mahim/sic-molecule-squeezer;
+             Data: doi:10.5281/zenodo.21471674}
+}
 ```
-pip install femwell gmsh shapely scikit-fem matplotlib scipy numpy
-cd sim
-python sweep_fem.py && python fem_final.py
-python exp_lle.py && python exp_quantum.py && python exp_addendum.py
-python validate_quantum.py && python convergence_checks.py
-python make_numbers.py && python fig_abstract.py && python fig_device.py \
-  && python fig_comb.py && python fig_quantum.py && python fig_molecule.py \
-  && python fig_d3.py
-cd ../paper && pdflatex manuscript && pdflatex manuscript
-```
 
-Material data: refractiveindex.info database (CC0): 4H-SiC (Wang 2013,
-doi:10.1002/lpor.201300068), SiO2 (Malitson 1965, doi:10.1364/JOSA.55.001205).
+## License
 
-## Reference verification
-
-All 33 manuscript references (the 7 supplement references are a subset) were
-checked against Crossref and publisher records: every DOI resolves to the cited
-paper, and every bibliographic detail (authors, journal, volume, pages, year)
-matches. In-text factual claims about cited work were verified against the
-sources. No errors found.
+Code: [Apache-2.0](LICENSE) (includes an express patent grant from the
+authors; see the NOTICE file). The material-dispersion coefficients derive
+from the refractiveindex.info database (CC0). Archived data and testbench
+outputs on Zenodo are CC-BY-4.0.
