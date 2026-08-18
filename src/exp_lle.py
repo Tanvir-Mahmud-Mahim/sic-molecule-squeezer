@@ -126,14 +126,18 @@ if __name__ == "__main__":
     z_rep = 6.5
     d3_states = {}
     d3_v = {}
-    for s3 in [0.0, 1.0, 2.0, 4.0]:
+    keys = ["0.0", "1.0", "2.0", "2.5", "3.0"]
+    for s3 in [float(k) for k in keys]:
         psi, r, v, _ = converge_state(z_rep, d3scale=s3, T=500)
         ok, ratio = is_crystal(psi)
         d3_states[str(s3)] = psi
         d3_v[str(s3)] = v
         print(f"D3x{s3}: resid={r:.2e} v={v:.3e} crystal={ok} "
               f"odd/even={ratio:.1f}dB", flush=True)
-    np.savez("lle_d3family.npz", zeta0=z_rep,
-             v=[d3_v[k] for k in ["0.0", "1.0", "2.0", "4.0"]],
+    # the stability boundary itself (crystal lost between 3.25 and 3.5,
+    # scan step 0.25) is located by exp_d3boundary.py
+    np.savez("lle_d3family.npz", zeta0=z_rep, keys=keys,
+             boundary_scale=3.5,
+             v=[d3_v[k] for k in keys],
              **{f"psi_{k}": v for k, v in d3_states.items()})
     print("DONE")

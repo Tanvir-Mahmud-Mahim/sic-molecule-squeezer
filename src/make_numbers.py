@@ -26,6 +26,10 @@ sw = np.load("q_sweep.npz", allow_pickle=True)["rows"]
 ent = np.load("q_entanglement.npz")
 d3f = np.load("lle_d3family.npz")
 d3q = np.load("q_d3.npz")
+tw = np.load("q_tworing.npz")
+twf = np.load("q_tworing_family.npz")
+auxr = np.load("aux_ring.npz")
+d3b = np.load("d3_boundary.npz")
 
 conv = fem["convergence"]
 neff_best = [c["neff"] for c in conv if c["order"] == 2 and c["res"] == 0.03][0]
@@ -87,6 +91,42 @@ M["nDthreeBndkHz"] = f"{float(d3f['boundary_scale'])*abs(res['D3'])/2/np.pi/1e3:
 M["nDthreeSqSpread"] = f"{np.max(np.abs(np.array(d3q['min_db'])-d3q['min_db'][0])):.2f}"
 M["nOddSupp"] = f"{abs(np.median(dat['odd_even_db'][stat])):.0f}"
 M["nSqPerPump"] = f"{-mmin[iopt]/(P1*f**2):.2f}"
+
+# ---- explicit two-ring (full) model and auxiliary-ring alignment ----
+kaux_design = float(tw["kauxs"][-1])                    # kappa units
+M["nKauxGHz"] = f"{kaux_design*kappa/2/np.pi/1e9:.0f}"  # 8 GHz
+M["nJGHz"] = f"{np.sqrt(10*kaux_design)/2*kappa/2/np.pi/1e9:.1f}"
+M["nFullSq"] = f"{-float(tw['design_peak']):.1f}"
+M["nFullBW"] = f"{float(tw['design_bw_kappa'])*kappa/2/np.pi/1e9:.2f}"
+M["nFullMax"] = f"{-float(twf['full_db'].min()):.1f}"
+M["nAdErrTwoGHz"] = f"{float(tw['conv_db'][0]-tw['peak_ad_10']):.1f}"
+M["nAdErrDesign"] = f"{float(tw['conv_db'][2]-tw['peak_ad_10']):.1f}"
+M["nAdErrLargest"] = f"{float(tw['conv_db'][-1]-tw['peak_ad_10']):.2f}"
+M["nKauxLargest"] = f"{float(tw['conv_kaux'][-1])*kappa/2/np.pi/1e9:.0f}"
+M["nMismatchIdeal"] = f"{np.max(np.abs(auxr['dm_0nm']))/2/np.pi/1e6:.0f}"
+kaux8 = 4 * float(auxr["kaux"])
+kp0 = 10.0
+kmin0 = (kp0/(1+(2*np.asarray(auxr['dm_0nm'])/kaux8)**2)).min()
+kmin20 = (kp0/(1+(2*np.asarray(auxr['dm_20nm'])/kaux8)**2)).min()
+M["nKpMuMinIdeal"] = f"{kmin0:.2f}"
+M["nKpMuMinTwenty"] = f"{kmin20:.1f}"
+M["nTolFive"] = f"{-float(tw['design_real_5nm']):.1f}"
+M["nTolTwenty"] = f"{-float(tw['design_real_20nm']):.1f}"
+_tol20loss = float(tw['design_real_20nm']) - float(tw['design_peak'])
+M["nTolTwentyLoss"] = f"{_tol20loss:.1f}"
+M["nENfull"] = f"{float(tw['design_EN'].max()):.2f}"
+M["nNuTilde"] = f"{2.0**(-float(tw['design_EN'].max())):.2f}"
+M["nEPRdB"] = f"{-10*np.log10(2.0**(-float(tw['design_EN'].max()))):.1f}"
+M["nSqPerPumpFull"] = f"{-float(tw['design_peak'])/(P1*f**2):.2f}"
+M["nSMoneFull"] = f"{-10*np.log10(float(tw['design_sup_w'][0])):.1f}"
+M["nSMtwoFull"] = f"{-10*np.log10(float(tw['design_sup_w'][1])):.1f}"
+
+# ---- D3 boundary scan and mechanism ----
+M["nDthreeStep"] = f"{float(d3b['step']):.2f}"
+M["nDthreeLast"] = "3.25"
+M["nDthreeMuDW"] = "91"
+mech = np.load("d3_mech.npz")
+M["nBreathMHz"] = f"{float(mech['fdom'])*kappa/2/2/np.pi/1e6:.0f}"
 
 # odd/even suppression, threshold estimate
 with open("../paper/numbers.tex", "w") as fh:
