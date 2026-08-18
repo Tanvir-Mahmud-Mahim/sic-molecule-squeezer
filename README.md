@@ -36,9 +36,12 @@ separately on Zenodo: **doi:10.5281/zenodo.21471674**.
 | `src/dispersion.py` | ring resonance grid and D1, D2, D3, D4 extraction |
 | `src/lle.py` | modal Lugiato-Lefever solver, soliton-crystal ansatz, drift measurement |
 | `src/exp_lle.py` | crystal continuation across detuning; D3 scaling family |
+| `src/exp_d3boundary.py` | D3 stability-boundary scan (step 0.25) and breathing-mechanism diagnosis |
 | `src/quantum.py` | linearized multimode quantum model (input-output, covariance, log-negativity) |
 | `src/exp_quantum.py` | production quantum experiments (bare device, molecule sweep, entanglement, D3 study) |
 | `src/exp_addendum.py` | ideal-detection and molecule squeezing across the detuning family |
+| `src/aux_ring.py` | two-ring resonance alignment: mismatch, heater offset, kappa_P(mu), radius-error tolerance |
+| `src/exp_tworing.py` | full (non-adiabatic) two-ring quantum model of the photonic molecule |
 | `src/validate_quantum.py` | analytic testbench (vacuum, Bogoliubov, 3 dB bound, uncertainty) |
 | `src/convergence_checks.py` | numerical convergence testbench (LLE grid/step, mode truncation) |
 | `src/make_numbers.py` | regenerates every number quoted in the paper from the data |
@@ -71,12 +74,15 @@ cd src
 python sweep_fem.py         # FEM geometry sweep          (~5 min)
 python fem_final.py         # selected geometry, order-2  (~5 min)
 python exp_lle.py           # soliton-crystal families    (~40 min)
+python exp_d3boundary.py    # D3 stability boundary       (~15 min)
 python exp_quantum.py       # quantum experiments         (~15 min)
 python exp_addendum.py      # detuning-family squeezing   (~10 min)
+python aux_ring.py          # two-ring alignment           (~2 min)
+python exp_tworing.py       # full two-ring quantum model  (~10 min)
 python validate_quantum.py  # analytic testbench          (~1 min)
 python convergence_checks.py# convergence testbench       (~15 min)
 python make_numbers.py      # regenerate paper numbers
-for f in fig_abstract fig_device fig_comb fig_quantum fig_molecule fig_d3; do
+for f in fig_abstract fig_device fig_comb fig_quantum fig_molecule fig_tworing fig_d3; do
     python $f.py            # figures -> ../figures/
 done
 ```
