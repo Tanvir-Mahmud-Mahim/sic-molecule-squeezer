@@ -4,7 +4,7 @@
 multimode squeezed light from soliton-crystal microcombs.**
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21471674.svg)](https://doi.org/10.5281/zenodo.21471674)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21995634.svg)](https://doi.org/10.5281/zenodo.21995634)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org)
 
 This repository contains the complete simulation pipeline for the article
@@ -21,7 +21,7 @@ Sellmeier data (CC0)  ->  FEM waveguide modes  ->  ring dispersion D1..D4
 ```
 
 The raw simulation **data and the validation testbench** are archived
-separately on Zenodo: **doi:10.5281/zenodo.21471674**.
+separately on Zenodo: **doi:10.5281/zenodo.21995634**.
 
 ---
 
@@ -88,7 +88,7 @@ done
 ```
 
 To skip the compute and analyze the published outputs directly, download
-the Zenodo archive (doi:10.5281/zenodo.21471674) and unpack its `data/`
+the Zenodo archive (doi:10.5281/zenodo.21995634) and unpack its `data/`
 folder into `src/`.
 
 ## Testbench
@@ -127,7 +127,7 @@ archive (see `CITATION.cff`):
   title   = {Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule},
   year    = {2026},
   note    = {Code: https://github.com/Tanvir-Mahmud-Mahim/sic-molecule-squeezer;
-             Data: doi:10.5281/zenodo.21471674}
+             Data: doi:10.5281/zenodo.21995634}
 }
 ```
 
