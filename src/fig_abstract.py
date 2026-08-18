@@ -9,11 +9,12 @@ from figstyle import SERIES, OI, FULLW, save
 
 dat = np.load("lle_family.npz")
 rep = np.load("q_rep.npz")
+tw = np.load("q_tworing.npz")
 N = int(dat["N"])
 iz = int(np.argmin(np.abs(dat["zeta0"] - 6.5)))
 psi = dat["psi"][iz]
 
-fig = plt.figure(figsize=(FULLW, 1.68), layout=None)
+fig = plt.figure(figsize=(FULLW, 1.52), layout=None)
 fig.set_constrained_layout(False)
 gs = fig.add_gridspec(1, 4, wspace=0.42, left=0.015, right=0.985,
                       top=0.775, bottom=0.245, width_ratios=[1, 1, 1, 1.12])
@@ -62,7 +63,7 @@ for sp in ax.spines.values():
 ax = fig.add_subplot(gs[0, 2])
 axes.append(ax)
 ax.plot(rep["oms"], 10 * np.log10(rep["smin_bare"]), color="0.55", lw=1.0)
-ax.plot(rep["omsm"], 10 * np.log10(rep["smin_10.0"]), color=SERIES[2],
+ax.plot(tw["oms"], 10 * np.log10(tw["design_smin"]), color=SERIES[2],
         lw=1.3)
 ax.axhline(0, color="0.75", lw=0.5)
 ax.axhline(-3.01, color="0.55", lw=0.6, ls=":")
@@ -73,7 +74,7 @@ ax.set_yticks([])
 ax.annotate("bare (3 dB cap)", xy=(4.2, -2.6), xytext=(13.5, -4.9),
             fontsize=5.4, color="0.35",
             arrowprops=dict(arrowstyle="-", lw=0.55, color="0.5"))
-ax.annotate("molecule", xy=(4.5, -8.1), xytext=(15.5, -9.7),
+ax.annotate("molecule", xy=(4.5, -7.5), xytext=(15.5, -9.7),
             fontsize=5.6, color=SERIES[2],
             arrowprops=dict(arrowstyle="-", lw=0.55, color=SERIES[2]))
 for sp in ax.spines.values():
@@ -85,9 +86,9 @@ axes.append(ax)
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
 ax.axis("off")
-badges = [("8.5 dB", "squeezing at 8.3 mW pump"),
-          ("1.74 GHz", "squeezing bandwidth"),
-          ("$E_N$ = 0.12", "entangled 30-mode lattice")]
+badges = [("7.9 dB", "squeezing at 8.3 mW pump"),
+          ("1.81 GHz", "squeezing bandwidth"),
+          ("$E_N$ = 0.13", "entangled 30-mode lattice")]
 for i, (big, small) in enumerate(badges):
     y0 = 0.695 - i * 0.345          # bottom of badge i
     ax.add_patch(mp.FancyBboxPatch((0.02, y0), 0.96, 0.30,

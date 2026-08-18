@@ -29,13 +29,13 @@ for k, (name, lab) in enumerate(labels.items()):
             ms=2.6, lw=1.0, color=SERIES[k], label=lab)
 ax.axhspan(-kaux8 / 2 / 2 / np.pi / 1e9, kaux8 / 2 / 2 / np.pi / 1e9,
            color="0.85", alpha=0.45, lw=0, zorder=0)
-ax.text(20.5, 2.55, r"$\pm\kappa_{\rm aux}/2$", fontsize=6.2,
-        color="0.35", ha="right")
+ax.text(28.8, -3.35, r"$\pm\kappa_{\rm aux}/2$", fontsize=6.2,
+        color="0.35", ha="right", va="center")
 ax.set_xlabel(r"odd mode index $\mu$")
 ax.set_ylabel(r"mismatch $\Delta_\mu/2\pi$ (GHz)")
 ax.set_xlim(-31, 31)
-ax.legend(fontsize=6.2, loc="lower left", borderpad=0.3,
-          handletextpad=0.5)
+ax.legend(fontsize=6.2, loc="upper left", bbox_to_anchor=(0.015, 0.86),
+          borderpad=0.3, handletextpad=0.5)
 ax.grid(True)
 panel_label(ax, "(a)")
 
@@ -49,7 +49,7 @@ ax.set_xlabel(r"odd mode index $\mu$")
 ax.set_ylabel(r"$\kappa_P(\mu)/\kappa$")
 ax.set_xlim(-31, 31)
 ax.set_ylim(0, 11.2)
-ax.legend(fontsize=6.2, loc="lower left", borderpad=0.3,
+ax.legend(fontsize=6.2, loc="lower center", borderpad=0.3,
           handletextpad=0.5)
 ax.grid(True)
 panel_label(ax, "(b)")

@@ -12,7 +12,7 @@ rep = np.load("q_rep.npz")
 add = np.load("q_addendum.npz")
 sw = np.load("q_sweep.npz", allow_pickle=True)["rows"]
 
-fig, axs = plt.subplots(1, 3, figsize=(FULLW, 2.0))
+fig, axs = plt.subplots(1, 3, figsize=(FULLW, 1.86))
 
 # (a) bare spectrum
 ax = axs[0]
@@ -23,8 +23,8 @@ ax.plot(oms, 10 * np.log10(rep["smin_bare"]), color=SERIES[0],
         label="squeezing")
 ax.axhline(0, color="0.5", lw=0.6)
 ax.axhline(-3.01, color="0.4", lw=0.7, ls=":")
-ax.set_ylim(-4.6, 17)
-ax.text(7.7, -4.3, "3 dB coupling limit", fontsize=6.2, va="bottom", ha="right")
+ax.set_ylim(-5.1, 17)
+ax.text(7.7, -4.9, "3 dB coupling limit", fontsize=6.2, va="bottom", ha="right")
 ax.set_xlim(0, 8)
 ax.set_xlabel(r"sideband frequency $\omega/\kappa$")
 ax.set_ylabel("noise power (dB)")

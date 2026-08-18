@@ -15,7 +15,7 @@ dat = np.load("lle_family.npz")
 kappa = float(dat["kappa"])
 D3_design = float(dat["D"][2])
 
-fig, axs = plt.subplots(2, 2, figsize=(FULLW, 3.65))
+fig, axs = plt.subplots(2, 2, figsize=(FULLW, 3.18))
 
 scales = np.array([float(k) for k in d3f["keys"]])
 vs = np.array(d3f["v"])
@@ -49,9 +49,8 @@ ax.set_xlim(0, 40)
 ax.set_ylim(-8.6, 0.6)
 ax.set_xlabel(r"sideband frequency $\omega/\kappa$")
 ax.set_ylabel("squeezing (dB)")
-ax.annotate("all $D_3$ scales\n(0--3$\\times$, overlapping)",
-            xy=(8.2, -5.1), xytext=(2.3, -7.9), fontsize=6.0,
-            arrowprops=dict(arrowstyle="-", lw=0.6, color="0.4"))
+ax.text(1.6, -1.85, "all $D_3$ scales\n(0--3$\\times$, overlapping)",
+        fontsize=6.4, ha="left", va="top", color="0.15")
 # inset: zoom on the spectral minimum, 5 curves resolved
 axi = ax.inset_axes([0.52, 0.13, 0.45, 0.52])
 for j, s3 in enumerate(scales):
