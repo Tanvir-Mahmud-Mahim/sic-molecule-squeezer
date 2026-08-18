@@ -111,10 +111,10 @@ Expected outputs are archived with the Zenodo record under
 |---|---|
 | Selected geometry | 1.85 um x 500 nm 4H-SiC, oxide clad, R = 50.06 um |
 | Dispersion | D2/2pi = 6.89 MHz, D3/2pi = -63.4 kHz (FSR 350 GHz) |
-| Detected squeezing | 8.5 dB at 8.3 mW pump (optimum kappa_P = 10 kappa) |
-| Squeezing bandwidth | 1.74 GHz (3.7x at 20 kappa) |
-| Entanglement | odd-mode lattice, E_N up to 0.12 at the drop port |
-| D3 tolerance | crystal survives to ~3.5x design D3 (~222 kHz) |
+| Detected squeezing | 7.9 dB at 8.3 mW pump (full two-ring model, kappa_P = 10 kappa, kappa_aux/2pi = 8 GHz; adiabatic limit 8.5 dB) |
+| Squeezing bandwidth | 1.81 GHz (full width at half-peak noise reduction) |
+| Entanglement | odd-mode lattice, E_N up to 0.13 at the drop port |
+| D3 tolerance | crystal survives 3.25x design D3, lost at 3.5x (~222 kHz) via a breathing instability |
 
 ## Citing
 
