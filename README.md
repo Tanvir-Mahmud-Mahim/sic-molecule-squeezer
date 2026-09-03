@@ -5,11 +5,12 @@ multimode squeezed light from soliton-crystal microcombs.**
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21995634.svg)](https://doi.org/10.5281/zenodo.21995634)
+[![Paper](https://img.shields.io/badge/Paper-10.1364%2FOE.612248-blue)](https://doi.org/10.1364/OE.612248)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org)
 
 This repository contains the complete simulation pipeline for the article
 
-> T. M. Mahim, M. M. Rahman, and A. S. M. Mohsin, "Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule," (2026).
+> T. M. Mahim, M. M. Rahman, and A. S. M. Mohsin, "Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule," Optics Express 34(18), 34822-34834 (2026). https://doi.org/10.1364/OE.612248 (open access)
 
 The pipeline runs from public material data to detected quantum noise:
 
@@ -125,7 +126,12 @@ archive (see `CITATION.cff`):
 @article{Mahim2026SiCSqueezer,
   author  = {Mahim, Tanvir M. and Rahman, M. Mosaddequr and Mohsin, Abu S. M.},
   title   = {Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule},
+  journal = {Optics Express},
+  volume  = {34},
+  number  = {18},
+  pages   = {34822--34834},
   year    = {2026},
+  doi     = {10.1364/OE.612248},
   note    = {Code: https://github.com/Tanvir-Mahmud-Mahim/sic-molecule-squeezer;
              Data: doi:10.5281/zenodo.21995634}
 }

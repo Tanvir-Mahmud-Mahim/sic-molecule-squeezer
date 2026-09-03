@@ -39,4 +39,10 @@ preferred-citation:
     - family-names: Mohsin
       given-names: Abu S. M.
   title: "Overcoming the 3 dB squeezing extraction limit in silicon carbide microcombs with a photonic molecule"
+  journal: "Optics Express"
+  volume: 34
+  issue: 18
+  start: 34822
+  end: 34834
   year: 2026
+  doi: 10.1364/OE.612248
