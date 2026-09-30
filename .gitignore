@@ -7,3 +7,4 @@ src/*.json
 src/*.log
 !src/requirements*
 figures/*.pdf
+numbers/

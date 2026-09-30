@@ -25,10 +25,11 @@ material data  ->  waveguide modes (FEM)  ->  ring dispersion D1..D4
                ->  squeezing spectra, supermodes, entanglement
 ```
 
-A few pieces are not complete in this repository: `fig_tworing.py` expects
-a data field that no script writes, `make_numbers.py` reads two files that
-no script writes, and supplementary Fig. S1 has no script. They are listed
-in [Section 10](#10-notes-on-the-calculations) under "Known gaps".
+Supplementary Fig. S1 has no script in this repository, and two statements
+of the published supplement do not match what the code and the archived
+data give (the first two rows of Table S1, and the breathing frequency in
+Section 6). They are listed in [Section 10](#10-notes-on-the-calculations)
+under "Known gaps" and "Differences from the published supplement".
 
 ---
 
@@ -141,9 +142,11 @@ sic-molecule-squeezer/
     |-- exp_addendum.py        step 6: ideal detection and molecule across detuning
     |-- aux_ring.py            step 7: alignment of the two rings, radius errors
     |-- exp_tworing.py         step 8: full two-ring quantum model
+    |-- exp_tworing_family.py  step 9: full two-ring model across detuning
+    |-- exp_d3mechanism.py     step 10: breathing state just past the D3 boundary
     |-- validate_quantum.py    checks of quantum.py against exact results
     |-- convergence_checks.py  numerical convergence checks
-    |-- make_numbers.py        writes the article's numbers as LaTeX macros
+    |-- make_numbers.py        writes the article's numbers as LaTeX macros (numbers/numbers.tex)
     |-- figstyle.py            shared figure style
     `-- fig_*.py               one script per figure (see Section 6)
 ```
@@ -151,8 +154,10 @@ sic-molecule-squeezer/
 All scripts are run from inside `src/`. They read and write their results
 (`.json` and `.npz` files) in `src/` itself; the figure scripts write to
 `figures/` (both PDF and PNG; only the PNG previews are stored on GitHub).
-The result files are not stored on GitHub (`.gitignore` excludes
-`src/*.npz` and `src/*.json`); the archived copy is on Zenodo. The FEM
+`make_numbers.py` writes `numbers/numbers.tex` in the repository folder
+(it creates `numbers/` when needed). The result files are not stored on
+GitHub (`.gitignore` excludes `src/*.npz`, `src/*.json` and `numbers/`);
+the archived copy is on Zenodo. The FEM
 scripts also leave a temporary mesh file `mesh.msh` in `src/` (also
 ignored by git).
 
@@ -235,8 +240,13 @@ example:
 python fig_comb.py
 ```
 
-The layout of the Zenodo archive could not be checked for this guide
-(zenodo.org was not reachable from the checking machine).
+The unpacked archive (checked on 30 September 2026) has a `data/` folder
+with the 15 result files the scripts write (including
+`q_tworing_family.npz` and `d3_mech.npz`), and a `testbench/` folder with
+a frozen copy of the scripts (`testbench/src/`) and reference logs
+(`testbench/expected_output/`). The archive does not contain the two
+scripts added in the fix of 30 September 2026 (`exp_tworing_family.py`,
+`exp_d3mechanism.py`).
 
 ### Way C: recompute everything from scratch
 
@@ -244,22 +254,20 @@ Run the steps of [Section 5](#5-the-scripts-step-by-step) in order. The
 previous README estimated about 1 to 2 hours on a modern laptop in total.
 When checking this guide, steps 1 to 8 plus `convergence_checks.py`
 together took about 70 minutes on a shared 2-core machine, and each figure
-script a few seconds.
+script a few seconds; steps 9 and 10 (added later) took about 9 minutes
+more (see the table in Section 5).
 On Linux or macOS the same order can be written as:
 
 ```
 for s in sweep_fem fem_final exp_lle exp_d3boundary exp_quantum \
-         exp_addendum aux_ring exp_tworing validate_quantum convergence_checks; do
+         exp_addendum aux_ring exp_tworing exp_tworing_family exp_d3mechanism \
+         validate_quantum convergence_checks make_numbers; do
     python $s.py
 done
 for f in fig_abstract fig_device fig_comb fig_quantum fig_molecule fig_tworing fig_d3; do
     python $f.py
 done
 ```
-
-`make_numbers.py` and `fig_tworing.py` do not run to the end with only the
-outputs of these scripts; see "Known gaps" in
-[Section 10](#10-notes-on-the-calculations).
 
 ---
 
@@ -280,9 +288,11 @@ jobs; a machine to yourself may well be faster.
 | 6 | `python exp_addendum.py` | For every stationary crystal: squeezing with ideal detection (all loss monitored) and with the molecule at κP = 10κ and 20κ | `lle_family.npz` | `q_addendum.npz` | ~10 min | 2.6 min |
 | 7 | `python aux_ring.py` | Resonances of the small ring (radius for a 700 GHz FSR), one heater offset that best aligns them with the odd main-ring modes, the leftover mismatch, and the effect of 5 nm and 20 nm radius errors | `fem_final.json`, `lle_family.npz` | `aux_ring.npz` | ~2 min | 28 s |
 | 8 | `python exp_tworing.py` | Full two-ring quantum model: comparison with the simplified model for κP = 5 to 30 κ and κaux/2π = 2, 4, 8 GHz; convergence as κaux grows; design point (κP = 10κ, 8 GHz) with bandwidth, supermodes, entanglement and radius errors | `lle_family.npz`, `aux_ring.npz` | `q_tworing.npz` | ~10 min | 15 min |
+| 9 | `python exp_tworing_family.py` | Full two-ring model at the design point (κP = 10κ, κaux/2π = 8 GHz, perfect alignment) for every stationary crystal (ζ0 = 5.75 to 11.0): peak squeezing at the drop port | `lle_family.npz`, `aux_ring.npz` | `q_tworing_family.npz` | - | 7.3 min |
+| 10 | `python exp_d3mechanism.py` | Converges the crystal at 3.25 times D3 (ζ0 = 6.5), switches to 3.5 times D3 and follows the resulting breathing state for 150 time units (2/κ): peak field and comb lines μ = 2 and 88, their mean and oscillation, the dominant breathing frequency, and where Dint changes sign | `fem_final.json` | `d3_mech.npz` | - | 1.7 min |
 | - | `python validate_quantum.py` | Checks of the quantum model against exact results (Section 9) | - | printed only | ~1 min | 1.4 s |
 | - | `python convergence_checks.py` | Soliton solver: grid size and time step; quantum model: number of modes kept (M = 20, 30, 40) | `fem_final.json`, `lle_family.npz` | printed only | ~15 min | 3.7 min |
-| - | `python make_numbers.py` | Collects every quoted number into LaTeX macros | all of the above, plus `q_tworing_family.npz` and `d3_mech.npz` | `../paper/numbers.tex`, `../supplement/numbers.tex` | - | does not run (see Section 10) |
+| - | `python make_numbers.py` | Collects every quoted number into LaTeX macros (also printed as JSON) | `fem_final.json` and the outputs of steps 3 to 10 | `../numbers/numbers.tex` (folder created if needed) | - | 1.4 s |
 | - | `python fig_*.py` | Draws the figures (Section 6) | see Section 6 | `../figures/*.pdf`, `../figures/*.png` | - | see Section 6 |
 
 No script uses random numbers.
@@ -305,7 +315,7 @@ the main text. Check the article for the final numbering.
 | `fig3_quantum` | Plain ring: (a) squeezing and anti-squeezing spectra, (b) the two strongest supermodes, (c) squeezing versus detuning with the 3 dB bound and ideal detection | steps 5, 6 | `fig_quantum.py` | 2 s |
 | `fig4_molecule` | Molecule: (a) spectra for several κP, (b) peak squeezing versus κP, (c) bandwidth versus κP, (d) squeezing versus detuning | steps 5, 6 | `fig_molecule.py` | 3 s |
 | `fig5_d3` | (a) comb-spacing shift versus D3 with the loss point, (b) spectra for all D3 scales, (c) supermode asymmetry, (d) entanglement map between odd modes | steps 3, 5 | `fig_d3.py` | 3 s |
-| `fig6_tworing` | Full two-ring model: (a) mismatch after heater alignment, (b) resulting extraction rate per mode, (c) spectra, simplified versus full model, (d) peak squeezing versus κaux and radius-error points | steps 7, 8 | `fig_tworing.py` | fails, see Section 10 |
+| `fig6_tworing` | Full two-ring model: (a) mismatch after heater alignment, (b) resulting extraction rate per mode, (c) spectra, simplified versus full model, (d) peak squeezing versus κaux and radius-error points | steps 7, 8 | `fig_tworing.py` | 12 s |
 | `figS1` | Supplementary Fig. S1: supermodes at the drop port (κP = 20κ) and spectra of bare ring and molecule | - | no script in this repository | - |
 
 ---
@@ -321,13 +331,16 @@ the main text. Check the article for the final numbering.
 | `quantum.py` | `CombQuantum`: linearized quantum model around the comb; output noise spectra, squeezing spectra, supermodes, intracavity covariance; `log_negativity` (entanglement measure for two modes) |
 | `figstyle.py` | Shared figure style (Okabe-Ito colour-blind-safe colours, DejaVu Sans font, 5.9 inch full width) and the `save` helper |
 
-Two of the `exp_*.py` scripts also serve as modules for other scripts:
+Three of the `exp_*.py` scripts also serve as modules for other scripts:
 `exp_lle.py` (`converge_state`, `is_crystal`, `zeta_of`; used by
-`exp_d3boundary.py` and `convergence_checks.py`) and `exp_quantum.py`
-(`build`, `max_squeezing`, `centered_psi`, `zeta_vec`; used by
-`exp_addendum.py`, `exp_tworing.py` and `convergence_checks.py`). Importing
-`exp_lle.py` loads `fem_final.json`, and importing `exp_quantum.py` loads
-`lle_family.npz`, straight away, so those files must already exist.
+`exp_d3boundary.py`, `exp_d3mechanism.py` and `convergence_checks.py`),
+`exp_quantum.py` (`build`, `max_squeezing`, `centered_psi`, `zeta_vec`;
+used by `exp_addendum.py`, `exp_tworing.py` and `convergence_checks.py`)
+and `exp_tworing.py` (`build_tworing`, `peak`; used by
+`exp_tworing_family.py`). Importing `exp_lle.py` loads `fem_final.json`,
+importing `exp_quantum.py` loads `lle_family.npz`, and importing
+`exp_tworing.py` loads `lle_family.npz` and `aux_ring.npz`, straight away,
+so those files must already exist.
 
 ---
 
@@ -401,7 +414,9 @@ matched Table S1 to all 7 printed digits (for example 2.3081259 for the
 production setting). The first two rows did not: 60 nm gave 2.3064460
 (2958 elements) and 50 nm gave 2.3068171 (3426 elements), while Table S1
 lists 2.3068171 (3426 elements) for 60 nm and 2.3067888 (3426 elements)
-for 50 nm.
+for 50 nm. The archived `fem_final.json` agrees with the code, not with
+the table; see "Differences from the published supplement" in
+[Section 10](#10-notes-on-the-calculations).
 
 **`convergence_checks.py`** prints the soliton result for grid sizes 192
 and 256 and time steps 0.004, 0.002 and 0.001 (compare with Table S2 of the
@@ -437,9 +452,53 @@ supplement), and the peak squeezing for M = 20, 30 and 40 kept modes
   supplement's statement that the state stays symmetric and breathes
   instead.
 
-**Expected outputs**: the previous README states that reference outputs
-are archived with the Zenodo record under `testbench/expected_output/`
-(not checked for this guide).
+**Expected outputs**: the Zenodo archive has reference logs in
+`testbench/expected_output/`: `exp_lle.log`, `exp_d3boundary.log`,
+`exp_quantum.log`, `exp_addendum.log`, `exp_tworing.log`,
+`convergence_checks.log`, `d3_mechanism.log` (the script that wrote it is
+in neither this repository nor the archive; `exp_d3mechanism.py`
+reproduces it, see below) and `d3_gridcheck.log` (no script in this
+repository; see "Known gaps").
+
+**Check of the fix (30 September 2026).** With the archived input files
+from Zenodo v1.1 copied into `src/`:
+
+- `exp_tworing.py` wrote a `q_tworing.npz` with the same 35 arrays, in the
+  same order, as the archived file, and its printed output equals
+  `testbench/expected_output/exp_tworing.log` line for line.
+  All 35 arrays, including the new `smin_full2_10`, are bit for bit
+  identical to the archived ones. (This run took 41 min, against 15 min
+  in the earlier check, because the shared machine was heavily loaded.)
+The scripts that originally wrote `q_tworing_family.npz` and `d3_mech.npz`
+are in neither this repository nor the Zenodo archive. `exp_tworing_family.py`
+and `exp_d3mechanism.py` were written for this fix. Their settings are
+reconstructions, chosen so that the output matches the archived files:
+for `exp_tworing_family.py`, which states to include (co-moving residual
+below 1e-2 and crystal test passed); for `exp_d3mechanism.py`, the run
+length (150 time units), time step (0.002), sampling interval (0.25), the
+second comb line (μ = 88) and taking the statistics from the second half of
+the record. The comparisons below show that these settings reproduce the
+archived files.
+
+- `exp_tworing_family.py` reproduced the archived `q_tworing_family.npz`
+  (`zeta0`, `kaux` and `kp` identical; `full_db` within 4.6e-14 dB of
+  the archived values, against a tolerance of 1e-12 dB; this run used one
+  BLAS thread, `OPENBLAS_NUM_THREADS=1`, which changes rounding in the
+  last digits).
+- `exp_d3mechanism.py` reproduced the archived `d3_mech.npz` bit for bit
+  (all 5 arrays identical), and its printed output equals
+  `testbench/expected_output/d3_mechanism.log` line for line.
+- `make_numbers.py` then wrote `numbers/numbers.tex`; its 73 macros are
+  identical to those it writes from the archived files alone. Nothing was
+  written outside the repository.
+- `fig_tworing.py` ran and drew `figures/fig6_tworing.png` pixel for
+  pixel (and byte for byte) identical to the PNG stored in the
+  repository; `fig_abstract.py`, which also reads `q_tworing.npz`, still
+  gives an identical `fig0_abstract.png`.
+- The repository's checks were rerun afterwards: `validate_quantum.py`
+  printed the values in the table above, and the output of
+  `convergence_checks.py` equals `testbench/expected_output/convergence_checks.log`
+  line for line.
 
 ---
 
@@ -492,37 +551,77 @@ uses second-order elements.
 
 **Hard-coded values.** Some numbers are typed into scripts rather than
 read from results: `exp_lle.py` stores `boundary_scale=3.5`;
-`make_numbers.py` sets `nDthreeLast = "3.25"` and `nDthreeMuDW = "91"`;
+`make_numbers.py` sets `nDthreeLast = "3.25"` and `nDthreeMuDW = "91"`
+(the 91 is the mode where Dint changes sign at 3.5 times D3, which
+`exp_d3mechanism.py` prints);
 `fig_molecule.py` converts bandwidth with 0.1289 GHz per κ;
 `fig_abstract.py` prints "7.9 dB", "1.81 GHz" and "E_N = 0.13".
 
-**Known gaps** (found while checking this guide; the code was not changed):
+**Known gaps** (still open after the fix of 30 September 2026):
 
-1. `fig_tworing.py` reads `smin_full2_10` from `q_tworing.npz`, but
-   `exp_tworing.py` only saves `smin_full8_*` (the 8 GHz curves). With
-   outputs made by this repository's `exp_tworing.py`, `fig_tworing.py`
-   stops with `KeyError: 'smin_full2_10 is not a file in the archive'`
-   (confirmed when checking this guide).
-2. `make_numbers.py` reads `q_tworing_family.npz` and `d3_mech.npz`. No
-   script in this repository writes these files (they may be in the Zenodo
-   archive; not checked). It also writes to `../paper/numbers.tex` and
-   `../supplement/numbers.tex`, and these folders are not in the repository.
-   When checked, it stopped with `FileNotFoundError` for
-   `q_tworing_family.npz`.
-3. `figures/figS1.png` has no script in this repository.
-4. Some supplement statements rely on runs that are not scripted here: the
-   D3 boundary on grids of 256 and 320 modes, and the breathing frequency
-   (58 MHz in the supplement), which `make_numbers.py` computes from
-   `d3_mech.npz`.
-5. `.zenodo.json` still gives an older article title in its description
+1. `figures/figS1.png` has no script in this repository.
+2. The D3 boundary on grids of 256 and 320 modes (supplement Section 6) is
+   not scripted here. The Zenodo archive has its reference log
+   (`testbench/expected_output/d3_gridcheck.log`) but no script for it.
+3. `.zenodo.json` still gives an older article title in its description
    ("Photonic-molecule extraction of multimode squeezed light from a
    dispersion-engineered 4H-silicon-carbide soliton-crystal microcomb"),
    not the published title, and does not list the paper DOI.
-6. `CITATION.cff` describes the tagged code (version 1.0.0, 21 July 2026),
+4. `CITATION.cff` describes the tagged code (version 1.0.0, 21 July 2026),
    but the code on `main` includes later, untagged changes, and the data
    DOI it lists (10.5281/zenodo.21995634, called "Zenodo v1.1" in commit
    47a689f) is not the one the v1.0.0 tag cited (10.5281/zenodo.21471674).
    See [Section 11](#11-version-history).
+
+Gaps closed on 30 September 2026 (see CHANGELOG.md): `fig_tworing.py`
+stopped with `KeyError: 'smin_full2_10 is not a file in the archive'`
+because `exp_tworing.py` did not save that curve; `make_numbers.py` read
+`q_tworing_family.npz` and `d3_mech.npz`, which no script wrote, and wrote
+into `../paper/` and `../supplement/`, which are not in the repository.
+
+**Differences from the published supplement.** `supplement.pdf` is the
+published supplemental document and is not changed. Two of its statements
+do not match the code and the archived data:
+
+1. *Table S1, first two rows.* `fem_final.py` gives, with first-order
+   elements, 2.3064460 (2958 elements) at 60 nm and 2.3068171 (3426
+   elements) at 50 nm. The archived production output `fem_final.json`
+   (Zenodo v1.1) holds the same values (2.306446026374873 with 2958
+   elements; 2.3068170818047125 with 3426 elements), and a rerun on
+   30 September 2026 (gmsh 4.15.2, scikit-fem 12.0.2, femwell 0.1.12)
+   reproduced them to about 1e-15. Table S1 instead lists 2.3068171 (3426
+   elements) for 60 nm, which is the 50 nm result, and 2.3067888 (3426
+   elements) for 50 nm. The value 2.3067888 is in no archived file, and
+   none of these settings gave it: first order with core resolution 70,
+   65, 60, 55, 50, 45, 40 or 35 nm; the 50 nm mesh with a 50.06 µm bend
+   radius; second order at 60 nm. Table S1 is identical in every version
+   of `supplement.pdf` in the git history (first added in commit b4f81a4,
+   22 July 2026), and `fem_final.py` has not changed since it was added
+   (commit 1ce6f1a, 21 July 2026). The two rows therefore look like a
+   mistake in the table, not in the code. No other number depends on
+   them: the other five rows match, and the scripts use only the
+   second-order results (the production setting and `nNeffConv` in
+   `make_numbers.py`). The code was not changed.
+2. *Breathing frequency (supplement Section 6: "58 MHz").*
+   `exp_d3mechanism.py` samples the peak field every 0.25 time units for
+   150 units; the time unit is 2/κ (`lle.py`). The dominant frequency
+   `fdom` = 0.9067 is read from `numpy.fft.rfftfreq`, so it is in cycles
+   per time unit: one oscillation every 1/0.9067 = 1.10 time units, which
+   the archived series also shows directly (upward zero crossings of the
+   peak field in the second half are on average 4.4 samples, i.e. 1.10
+   time units, apart). `make_numbers.py` (`nBreathMHz`) and the archived
+   `d3_mechanism.log` convert it as fdom·(κ/2)/2π = 58.5 MHz, which treats
+   `fdom` as an angular frequency. Read as cycles per time unit, the same
+   data give fdom·κ/2 ≈ 367 MHz (about 2.85 κ/2π), 2π times higher. The
+   conversion was left as it is, so that `make_numbers.py` and the new
+   script reproduce the published value and the archived log; the authors
+   should confirm which is intended. The peak-field oscillation of about
+   ±17% in the same paragraph agrees with `d3_mech.npz` (0.6665 around a
+   mean of 3.979). The paragraph also says the odd/even contrast "stays
+   below -260 dB"; the archived `d3_boundary.npz` track of the same
+   set-up (3.25 crystal switched to 3.5, up to t = 100) ranges from -281
+   to -214 dB, so it is far below the even modes but not always below
+   -260 dB.
 
 ---
 
@@ -530,7 +629,8 @@ read from results: `exp_lle.py` stores `boundary_scale=3.5`;
 
 | Version | Date | What |
 |---|---|---|
-| documentation update (branch `docs`, not tagged) | 30 Sep 2026 | This guide rewritten; CHANGELOG added |
+| fixes (on `main`, not tagged) | 30 Sep 2026 | `exp_tworing.py` saves the 2 GHz curve that `fig_tworing.py` needs; new `exp_tworing_family.py` and `exp_d3mechanism.py` write the two files `make_numbers.py` needs; `make_numbers.py` writes to `numbers/` instead of `../paper/` and `../supplement/` |
+| documentation update (on `main`, not tagged) | 30 Sep 2026 | This guide rewritten; CHANGELOG added |
 | untagged changes on `main` | 18 Aug to 4 Sep 2026 | Revision 1 of the article: full two-ring model, small-ring alignment, D3 boundary scan, updated figures and supplement, data DOI changed to 10.5281/zenodo.21995634; then the published citation |
 | **v1.0.0** (git tag) | 21 Jul 2026 | First release of the code, figures and metadata |
 

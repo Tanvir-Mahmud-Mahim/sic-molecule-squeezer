@@ -4,7 +4,53 @@ All notable changes to this repository are listed here, newest first.
 Entries before the documentation update are taken from the git history and
 the `v1.0.0` tag.
 
-## Documentation update (30 September 2026, branch `docs`, not tagged)
+## Fix (30 September 2026, on `main`, not tagged)
+
+Code and documentation. No scientific result changed: every file the
+changed or new scripts write was compared with the archived Zenodo v1.1
+copy (details in README Section 9).
+
+- `src/exp_tworing.py`: now also saves `smin_full2_10` (drop-port
+  squeezing spectrum of the full model at κP = 10κ, κaux/2π = 2 GHz,
+  which the script already computed) in `q_tworing.npz`.
+  Before: the file lacked this array and `fig_tworing.py` stopped with
+  `KeyError: 'smin_full2_10 is not a file in the archive'`.
+  After: `q_tworing.npz` has the same arrays as the archived file and
+  `fig_tworing.py` runs.
+- New `src/exp_tworing_family.py`: full two-ring model at the design point
+  (κP = 10κ, κaux/2π = 8 GHz) for every stationary crystal; writes
+  `q_tworing_family.npz`.
+  Before: no script wrote this file, and `make_numbers.py` stopped with
+  `FileNotFoundError`. After: the file is written and matches the archived
+  copy. The original script is not in the repository or the Zenodo
+  archive; the state selection (co-moving residual below 1e-2 and crystal
+  test passed) was reconstructed so that the output matches the archive.
+- New `src/exp_d3mechanism.py`: breathing state just past the D3
+  stability boundary; writes `d3_mech.npz`.
+  Before: no script wrote this file. After: the file is written and is
+  bit-for-bit identical to the archived copy; the printed output equals
+  the archived `testbench/expected_output/d3_mechanism.log`. The original
+  script is not in the repository or the Zenodo archive; its settings (run
+  length 150, time step 0.002, sampling every 0.25, comb line μ = 88,
+  statistics from the second half of the record) were reconstructed so
+  that the output matches the archive.
+- `src/make_numbers.py`: writes `numbers/numbers.tex` in the repository
+  (the folder is created when needed) instead of `../paper/numbers.tex`
+  and `../supplement/numbers.tex` (two identical copies, outside the
+  repository). The macros written are unchanged.
+- `.gitignore`: ignores the generated `numbers/` folder.
+- `README.md`: new scripts and output folder; closed gaps removed from
+  "Known gaps"; archive layout and reference logs described; new section
+  "Differences from the published supplement" on the first two rows of
+  Table S1 (a mistake in the table: the code and the archived
+  `fem_final.json` agree with each other, not with the table) and on the
+  unit of the breathing frequency (58 MHz in the supplement; the archived
+  data suggest a factor of 2π), plus a note that the archived odd/even
+  contrast track reaches -214 dB where the supplement says "below
+  -260 dB". None of these was changed in code, and `supplement.pdf` was
+  not changed.
+
+## Documentation update (30 September 2026, on `main`, not tagged)
 
 Documentation only; no code, data or figure was changed.
 
