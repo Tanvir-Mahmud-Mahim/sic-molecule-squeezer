@@ -134,6 +134,8 @@ if __name__ == "__main__":
             grid_db[i, j] = 10 * np.log10(s_f)
             if j == len(kauxs) - 1:
                 out[f"smin_full8_{kp:.0f}"] = smin_f
+            if j == 0 and kp == 10.0:
+                smin_full2_10 = smin_f   # 2 GHz curve, Fig. 6(c)
         print(f"kp={kp:4.0f}k  adiab {10*np.log10(s_a):+.2f}  "
               + "  ".join(f"{grid_db[i, j]:+.2f}" for j in range(len(kauxs))),
               flush=True)
@@ -190,5 +192,6 @@ if __name__ == "__main__":
         out[f"design_real_{name}"] = 10 * np.log10(s_r)
         out[f"design_smin_{name}"] = smin_r
         print(f"design real dR={name}: {10*np.log10(s_r):+.3f} dB")
+    out["smin_full2_10"] = smin_full2_10
     np.savez("q_tworing.npz", kappa=kappa, **out)
     print("DONE")

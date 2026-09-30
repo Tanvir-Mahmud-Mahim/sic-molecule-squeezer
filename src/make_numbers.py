@@ -1,5 +1,9 @@
 """Generate numbers.tex: every quantitative claim in the manuscript is a
-macro extracted directly from the simulation outputs."""
+macro extracted directly from the simulation outputs.
+
+Writes ../numbers/numbers.tex (the folder is created if needed) and prints
+the same macros as JSON."""
+import os
 import numpy as np, json
 
 fem = json.load(open("fem_final.json"))
@@ -129,10 +133,8 @@ mech = np.load("d3_mech.npz")
 M["nBreathMHz"] = f"{float(mech['fdom'])*kappa/2/2/np.pi/1e6:.0f}"
 
 # odd/even suppression, threshold estimate
-with open("../paper/numbers.tex", "w") as fh:
-    for k, v in M.items():
-        fh.write(f"\\newcommand{{\\{k}}}{{{v}}}\n")
-with open("../supplement/numbers.tex", "w") as fh:
+os.makedirs("../numbers", exist_ok=True)
+with open("../numbers/numbers.tex", "w") as fh:
     for k, v in M.items():
         fh.write(f"\\newcommand{{\\{k}}}{{{v}}}\n")
 print(json.dumps(M, indent=0))
