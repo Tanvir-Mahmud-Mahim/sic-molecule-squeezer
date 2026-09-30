@@ -17,10 +17,16 @@ version: 1.0.0
 date-released: 2026-07-21
 license: Apache-2.0
 repository-code: "https://github.com/Tanvir-Mahmud-Mahim/sic-molecule-squeezer"
+# version/date-released refer to the last tagged release (v1.0.0). The code on
+# main includes later, untagged changes (see CHANGELOG.md). The data DOI below
+# replaced 10.5281/zenodo.21471674 in commit 47a689f (18 Aug 2026).
 identifiers:
   - type: doi
     value: 10.5281/zenodo.21995634
-    description: "Zenodo archive of the simulation data and testbench"
+    description: "Zenodo archive of the simulation data and testbench, called \"Zenodo v1.1\" in commit 47a689f; cited since then"
+  - type: doi
+    value: 10.5281/zenodo.21471674
+    description: "Earlier Zenodo archive of the simulation data and testbench, cited at tag v1.0.0"
 keywords:
   - silicon carbide
   - microcomb
